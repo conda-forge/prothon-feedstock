@@ -60,6 +60,12 @@ requirements:
     # release failed on the code path the CLI took by default.
     - scikit-learn >=1.0
     - mdtraj >=1.9.7
+    # Arrived with config-as-study in 2.2: a study is written to and read from
+    # a YAML file, and the CLI's --config and --save-config both go through it.
+    # Missing here, `pip check` in the test section reports it and a user
+    # installing from conda-forge would meet it as a ModuleNotFoundError the
+    # first time they touched a config.
+    - pyyaml >=5.1
     # mdtraj declares netcdf4 in its own Python metadata and conda-forge's
     # mdtraj does not install it, so `pip check` in the test section reports a
     # broken requirement that belongs to a dependency rather than to us.
@@ -78,13 +84,21 @@ tests:
         - prothon.core
         - prothon.core.dissimilarity
         - prothon.core.representation
+        # The paths those two moved to in 2.3. `prothon.core` is a shim that
+        # forwards with a DeprecationWarning until 3.0, and testing both the
+        # old and the new names is what keeps the shim honest -- it shipped
+        # once handling `from prothon.core import x` and not
+        # `import prothon.core.x`, which this section caught.
+        - prothon.compare.dissimilarity
+        - prothon.represent.order_parameters
+        - prothon.sampling.correlation
       python_version:
         - ${{ python_min }}.*
         - "*"
   - script:
       - prothon --version
-      # Prints the measure registry and the detected backends, so this fails
-      # if a runtime dependency is declared but does not resolve.
+      # Prints the order parameter registry and the detected backends, so
+      # this fails if a runtime dependency is declared but does not resolve.
       - prothon --info
     requirements:
       run:
@@ -92,7 +106,7 @@ tests:
 
 about:
   homepage: https://github.com/aai-research-lab/Prothon
-  summary: Efficient comparison of protein conformational ensembles using local order parameters
+  summary: Software for accurate comparison of protein conformational ensembles
   description: |
     Prothon represents a protein conformational ensemble as a vector of
     probability distributions over local order parameters -- contact numbers,
