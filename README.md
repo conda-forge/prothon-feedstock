@@ -7,7 +7,7 @@ Home: https://github.com/aai-research-lab/Prothon
 
 Package license: MIT
 
-Summary: Efficient comparison of protein conformational ensembles using local order parameters
+Summary: Software for accurate comparison of protein conformational ensembles
 
 Development: https://github.com/aai-research-lab/Prothon
 
